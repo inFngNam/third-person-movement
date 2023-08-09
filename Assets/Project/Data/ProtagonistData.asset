@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c98e8f8fb308c844996d5b8471f2667, type: 3}
+  m_Name: ProtagonistData
+  m_EditorClassIdentifier: 
+  <BaseStats>k__BackingField:
+    <LocomotionStats>k__BackingField:
+      <MovementSpeed>k__BackingField: 5
+      <JumpHeight>k__BackingField: 1.2
+      <StandingStats>k__BackingField:
+        <WalkSpeedModifier>k__BackingField: 0.5
+        <RunSpeedModifier>k__BackingField: 1.5
+        <SprintSpeedModifier>k__BackingField: 2
+      <CrounchingStats>k__BackingField:
+        <WalkSpeedModifier>k__BackingField: 0.5
