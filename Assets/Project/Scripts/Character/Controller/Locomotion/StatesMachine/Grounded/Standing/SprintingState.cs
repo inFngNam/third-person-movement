@@ -4,9 +4,9 @@ using System;
 namespace Character.Locomotion.Grounded.Standing
 {
     [Serializable]
-    public class SpritingState : GroundedState
+    public class SprintingState : GroundedState
     {
-        public SpritingState(LocomotionController _controller) : base(_controller)
+        public SprintingState(LocomotionController _controller) : base(_controller)
         {
         }
 

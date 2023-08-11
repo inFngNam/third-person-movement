@@ -27,7 +27,7 @@ namespace Character.Locomotion.Grounded.Standing
 
             if (status.IsSprinting)
             {
-                controller.ChangeState(controller.StandingSpritingState);
+                controller.ChangeState(controller.StandingSprintingState);
                 return;
             }
 

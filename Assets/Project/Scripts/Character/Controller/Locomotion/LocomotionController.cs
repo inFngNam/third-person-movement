@@ -25,25 +25,16 @@ namespace Character.Controller
         [field: SerializeField]
         public Character.Locomotion.Grounded.Standing.RunningState StandingRunningState { get; private set; }
         [field: SerializeField]
-        public Character.Locomotion.Grounded.Standing.SpritingState StandingSpritingState { get; private set; }
+        public Character.Locomotion.Grounded.Standing.SprintingState StandingSprintingState { get; private set; }
 
         #endregion Standing
-
-        #region Crounching
-
-        [field: SerializeField]
-        public Character.Locomotion.Grounded.Crounching.IdlingState CrounchingIdlingState { get; private set; }
-
-        #endregion Crounching
 
         protected void InitializeStateMachine()
         {
             StandingIdlingState = new Character.Locomotion.Grounded.Standing.IdlingState(this);
             StandingWalkingState = new Character.Locomotion.Grounded.Standing.WalkingState(this);
             StandingRunningState = new Character.Locomotion.Grounded.Standing.RunningState(this);
-            StandingSpritingState = new Character.Locomotion.Grounded.Standing.SpritingState(this);
-
-            CrounchingIdlingState = new Character.Locomotion.Grounded.Crounching.IdlingState(this);
+            StandingSprintingState = new Character.Locomotion.Grounded.Standing.SprintingState(this);
         }
 
         public void ChangeState(BaseLocomotionState newState)

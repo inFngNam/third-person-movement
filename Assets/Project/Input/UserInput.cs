@@ -28,7 +28,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
             ""id"": ""1edc13f8-06c6-43cd-aca5-42c20226d47d"",
             ""actions"": [
                 {
-                    ""name"": ""Movement"",
+                    ""name"": ""Move"",
                     ""type"": ""Value"",
                     ""id"": ""9da6d5e6-bde2-4612-aff8-fef30865d5e7"",
                     ""expectedControlType"": ""Vector2"",
@@ -38,11 +38,11 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Sprint"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""e88457c9-1edd-4438-a1af-97b8e37c721d"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Hold"",
+                    ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
@@ -90,7 +90,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -101,7 +101,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard + Mouse"",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -112,7 +112,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard + Mouse"",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -123,7 +123,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard + Mouse"",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -134,7 +134,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard + Mouse"",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -217,7 +217,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
 }");
         // CharacterGrounded
         m_CharacterGrounded = asset.FindActionMap("CharacterGrounded", throwIfNotFound: true);
-        m_CharacterGrounded_Movement = m_CharacterGrounded.FindAction("Movement", throwIfNotFound: true);
+        m_CharacterGrounded_Move = m_CharacterGrounded.FindAction("Move", throwIfNotFound: true);
         m_CharacterGrounded_Sprint = m_CharacterGrounded.FindAction("Sprint", throwIfNotFound: true);
         m_CharacterGrounded_Jump = m_CharacterGrounded.FindAction("Jump", throwIfNotFound: true);
         m_CharacterGrounded_ToggleWalk = m_CharacterGrounded.FindAction("ToggleWalk", throwIfNotFound: true);
@@ -284,7 +284,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
     // CharacterGrounded
     private readonly InputActionMap m_CharacterGrounded;
     private List<ICharacterGroundedActions> m_CharacterGroundedActionsCallbackInterfaces = new List<ICharacterGroundedActions>();
-    private readonly InputAction m_CharacterGrounded_Movement;
+    private readonly InputAction m_CharacterGrounded_Move;
     private readonly InputAction m_CharacterGrounded_Sprint;
     private readonly InputAction m_CharacterGrounded_Jump;
     private readonly InputAction m_CharacterGrounded_ToggleWalk;
@@ -294,7 +294,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
     {
         private @UserInput m_Wrapper;
         public CharacterGroundedActions(@UserInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Movement => m_Wrapper.m_CharacterGrounded_Movement;
+        public InputAction @Move => m_Wrapper.m_CharacterGrounded_Move;
         public InputAction @Sprint => m_Wrapper.m_CharacterGrounded_Sprint;
         public InputAction @Jump => m_Wrapper.m_CharacterGrounded_Jump;
         public InputAction @ToggleWalk => m_Wrapper.m_CharacterGrounded_ToggleWalk;
@@ -309,9 +309,9 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_CharacterGroundedActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_CharacterGroundedActionsCallbackInterfaces.Add(instance);
-            @Movement.started += instance.OnMovement;
-            @Movement.performed += instance.OnMovement;
-            @Movement.canceled += instance.OnMovement;
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
@@ -331,9 +331,9 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
 
         private void UnregisterCallbacks(ICharacterGroundedActions instance)
         {
-            @Movement.started -= instance.OnMovement;
-            @Movement.performed -= instance.OnMovement;
-            @Movement.canceled -= instance.OnMovement;
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
@@ -377,7 +377,7 @@ public partial class @UserInput: IInputActionCollection2, IDisposable
     }
     public interface ICharacterGroundedActions
     {
-        void OnMovement(InputAction.CallbackContext context);
+        void OnMove(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnToggleWalk(InputAction.CallbackContext context);
