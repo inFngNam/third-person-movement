@@ -8,11 +8,20 @@ namespace Character.Controllers.Locomotion
 {
     public class LocomotionController : MonoBehaviour
     {
-        [SerializeField] internal CharacterController characterController;
-        [SerializeField] internal LocomotionStatus locomotionStatus;
-        [SerializeField] internal Animator m_Animator;
+        internal CharacterController m_CharacterController;
+
+        #region Animator
+
+        internal Animator m_Animator;
 
         public Animator GetAnimator() => m_Animator;
+
+        protected virtual void InitializeAnimator()
+        {
+
+        }
+
+        #endregion Animator
 
         #region StateMachine
 
@@ -51,6 +60,11 @@ namespace Character.Controllers.Locomotion
             currentState.Enter();
         }
 
+        protected virtual void UpdateState()
+        {
+            currentState.Update(locomotionStatus);
+        }
+
         #endregion StateMachine
 
         #region Stats
@@ -72,8 +86,13 @@ namespace Character.Controllers.Locomotion
 
         #region Runtime
 
+        [Header("Runtime")]
+        [SerializeField] internal LocomotionStatus locomotionStatus;
         protected bool isGrounded;
-        protected Vector3 verticalVelocity;
+        protected Vector3 m_VerticalVelocity;
+        protected float m_TargetRotation;
+        protected float m_RotationVelocity;
+        protected const float RotationSmoothTime = 0.12f;
 
         #endregion
 
@@ -83,58 +102,62 @@ namespace Character.Controllers.Locomotion
         {
             locomotionStatus = new LocomotionStatus();
             InitializeStateMachine();
+            InitializeAnimator();
             ChangeState(StandingIdlingState);
         }
 
         protected virtual void FixedUpdate()
         {
             ProcessGravity();
+            ProcessMove();
         }
 
         #endregion
 
         #region Logic
 
-        private void ProcessGravity()
+        protected virtual void ProcessGravity()
         {
-            isGrounded = characterController.isGrounded;
+            isGrounded = m_CharacterController.isGrounded;
 
-            verticalVelocity.y += EnvironmentConfigure.Gravity * Time.fixedDeltaTime;
-            if (isGrounded && verticalVelocity.y < 0)
+            m_VerticalVelocity.y += EnvironmentConfigure.Gravity * Time.fixedDeltaTime;
+            if (isGrounded && m_VerticalVelocity.y < 0)
             {
-                verticalVelocity.y = -2;
+                m_VerticalVelocity.y = -2;
             }
         }
 
-        public void ProcessMove(Vector2 input)
+        protected virtual void ProcessMove()
         {
-            Vector3 inputDirection = new Vector3(input.x, 0.0f, input.y).normalized;
+            Vector2 input = locomotionStatus.DirectionInput;
+            Vector3 moveDirection = new Vector3(input.x, 0.0f, input.y).normalized;
 
-            if (inputDirection != Vector3.zero)
+            if (moveDirection != Vector3.zero)
             {
-                _targetRotation = GetDirectionAngle(inputDirection) + GetCameraDirectionAngle();
+                m_TargetRotation = GetDirectionAngle(moveDirection);
                 float rotation = Mathf.SmoothDampAngle(
-                    transform.eulerAngles.y, _targetRotation,
-                    ref _rotationVelocity, RotationSmoothTime
+                    transform.eulerAngles.y, m_TargetRotation,
+                    ref m_RotationVelocity, RotationSmoothTime
                 );
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
 
-            Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
-            Vector3 horizontalVelocity = targetDirection.normalized * movementSpeed;
-            characterController.Move((horizontalVelocity + verticalVelocity) * Time.fixedDeltaTime);
+            Vector3 targetDirection = Quaternion.Euler(0.0f, m_TargetRotation, 0.0f) * Vector3.forward;
+            Vector3 horizontalVelocity = targetDirection.normalized * GetMovementSpeed();
+            m_CharacterController.Move((horizontalVelocity + m_VerticalVelocity) * Time.fixedDeltaTime);
         }
 
-        private int GetCameraDirectionAngle()
+        protected float GetDirectionAngle(Vector3 moveDirection)
         {
-            throw new NotImplementedException();
+            return Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
         }
 
-        private int GetDirectionAngle(Vector3 inputDirection)
+        protected float GetMovementSpeed()
         {
-            throw new NotImplementedException();
+            return currentState.SpeedModifiler * movementSpeed;
         }
 
         #endregion
     }
+
 }

@@ -1,6 +1,6 @@
-using Character.Controller;
 using UnityEngine;
 using infPlugIn.DesignPatterns;
+using Character.Controllers.Locomotion;
 
 namespace Character.Locomotion
 {

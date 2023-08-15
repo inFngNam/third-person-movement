@@ -1,4 +1,4 @@
-using Character.Controller;
+using Character.Controllers.Locomotion;
 using Protagonist.Configures;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,8 +12,16 @@ namespace Protagonist
 
         #region UnityFunction
 
-        private void FixedUpdate()
+        protected override void Awake()
         {
+            base.Awake();
+            m_CharacterController = GetComponent<CharacterController>();
+            m_Animator = GetComponent<Animator>();
+        }
+
+        protected override void FixedUpdate()
+        {
+            ProcessGravity();
             ProcessMove();
         }
 
@@ -27,6 +35,7 @@ namespace Protagonist
         public void OnMove(InputValue value)
         {
             locomotionStatus.SetDirectionInput(value.Get<Vector2>());
+            UpdateState();
         }
 
         protected void OnLook(InputValue value)

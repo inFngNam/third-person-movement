@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2979958145937013585}
   - component: {fileID: 3973873570701894369}
   - component: {fileID: 567156595882068966}
-  - component: {fileID: 4428588645988344688}
   - component: {fileID: 8077253894500687733}
   - component: {fileID: 4485401220499545902}
   m_Layer: 0
@@ -37,7 +36,7 @@ Transform:
   - {fileID: 5172756016810015300}
   - {fileID: 6385314030762025909}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &2979958145937013585
 CharacterController:
@@ -106,20 +105,6 @@ MonoBehaviour:
         <WalkSpeedModifier>k__BackingField: 0
         <RunSpeedModifier>k__BackingField: 0
         <SprintSpeedModifier>k__BackingField: 0
-  locomotionController: {fileID: 8077253894500687733}
---- !u!114 &4428588645988344688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1599979060969618248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5694f5f5b256ea42ab5c6e8e1b11a10, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterController: {fileID: 2979958145937013585}
 --- !u!114 &8077253894500687733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,12 +117,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf62d3eb7eb0894a84bce1e79207b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  locomotionStatus:
-    <DirectionInput>k__BackingField: {x: 0, y: 0}
-    <IsWalking>k__BackingField: 0
-    <IsSprinting>k__BackingField: 0
-    <IsMoving>k__BackingField: 0
-  m_Animator: {fileID: 3973873570701894369}
   <StandingIdlingState>k__BackingField:
     isCurrentState: 0
     <SpeedModifiler>k__BackingField: 0
@@ -150,7 +129,13 @@ MonoBehaviour:
   <StandingSprintingState>k__BackingField:
     isCurrentState: 0
     <SpeedModifiler>k__BackingField: 0
-  controllerConfigures:
+  locomotionStatus:
+    <DirectionInput>k__BackingField: {x: 0, y: 0}
+    <LookInput>k__BackingField: {x: 0, y: 0}
+    <IsWalking>k__BackingField: 0
+    <IsSprinting>k__BackingField: 0
+    <IsMoving>k__BackingField: 0
+  configure:
     <MoveRelativeToCamera>k__BackingField: 0
 --- !u!114 &4485401220499545902
 MonoBehaviour:

@@ -1,4 +1,4 @@
-using Character.Controller;
+using Character.Controllers.Locomotion;
 using System;
 
 namespace Character.Locomotion.Grounded.Standing
@@ -8,12 +8,6 @@ namespace Character.Locomotion.Grounded.Standing
     {
         public IdlingState(LocomotionController _controller) : base(_controller)
         {
-        }
-
-        public override void Enter()
-        {
-            base.Enter();
-            controller.GetAnimator().SetFloat("movement_speed", 0);
         }
 
         public override void Update(LocomotionStatus status)

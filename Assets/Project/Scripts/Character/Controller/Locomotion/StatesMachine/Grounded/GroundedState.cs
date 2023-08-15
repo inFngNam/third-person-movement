@@ -1,4 +1,4 @@
-using Character.Controller;
+using Character.Controllers.Locomotion;
 
 namespace Character.Locomotion.Grounded
 {

@@ -1,4 +1,4 @@
-using Character.Controller;
+using Character.Controllers.Locomotion;
 using System;
 
 namespace Character.Locomotion.Grounded.Crounching
