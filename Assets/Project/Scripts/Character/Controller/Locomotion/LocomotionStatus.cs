@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Character.Controller
+namespace Character.Controllers.Locomotion
 {
     [Serializable]
     public class LocomotionStatus

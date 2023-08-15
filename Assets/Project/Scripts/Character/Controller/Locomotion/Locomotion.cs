@@ -1,7 +1,5 @@
 using Configure;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.Windows;
 
 namespace Character.Controller
 {

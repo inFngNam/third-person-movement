@@ -10,21 +10,18 @@ namespace Protagonist
         public static TheProtagonist Instance { get; private set; }
         private ProtagonistData m_Data;
         [SerializeField] private CharacterStats stats;
-        [SerializeField] private ProtagonistLocomotionController locomotionController;
+        private ProtagonistLocomotionController locomotionController;
 
         public event Action<LocomotionStats> OnChangeLocomotionStats;
 
         private void Awake()
         {
             Instance = this;
-        }
-
-        private void OnEnable()
-        {
+            locomotionController = GetComponent<ProtagonistLocomotionController>();
             OnChangeLocomotionStats += locomotionController.OnChangeLocomotionStats;
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             OnChangeLocomotionStats -= locomotionController.OnChangeLocomotionStats;
         }

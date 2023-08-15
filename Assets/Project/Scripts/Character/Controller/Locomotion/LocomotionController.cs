@@ -1,15 +1,16 @@
 using Character.Locomotion;
 using Character.Stats;
+using Configure;
+using System;
 using UnityEngine;
 
-namespace Character.Controller
+namespace Character.Controllers.Locomotion
 {
-    [RequireComponent(typeof(Locomotion))]
     public class LocomotionController : MonoBehaviour
     {
-        protected Locomotion locomotion;
-        [SerializeField] protected LocomotionStatus locomotionStatus;
-        [SerializeField] protected Animator m_Animator;
+        [SerializeField] internal CharacterController characterController;
+        [SerializeField] internal LocomotionStatus locomotionStatus;
+        [SerializeField] internal Animator m_Animator;
 
         public Animator GetAnimator() => m_Animator;
 
@@ -54,11 +55,6 @@ namespace Character.Controller
 
         #region Stats
 
-        protected float movementSpeed;
-        protected float jumpHeight;
-
-        #endregion
-
         public void OnChangeLocomotionStats(LocomotionStats stats)
         {
             movementSpeed = stats.MovementSpeed;
@@ -69,23 +65,76 @@ namespace Character.Controller
             StandingSprintingState.SpeedModifiler = stats.StandingStats.SprintSpeedModifier;
         }
 
+        protected float movementSpeed;
+        protected float jumpHeight;
+
+        #endregion
+
+        #region Runtime
+
+        protected bool isGrounded;
+        protected Vector3 verticalVelocity;
+
+        #endregion
+
+        #region UnityFunction
+
         protected virtual void Awake()
         {
-            locomotion = GetComponent<Locomotion>();
             locomotionStatus = new LocomotionStatus();
             InitializeStateMachine();
             ChangeState(StandingIdlingState);
         }
 
-        protected virtual void ProcessMove()
+        protected virtual void FixedUpdate()
         {
-            currentState.Update(locomotionStatus);
-            locomotion.ProcessMove(locomotionStatus.DirectionInput, movementSpeed * currentState.SpeedModifiler);
+            ProcessGravity();
         }
 
-        protected virtual void Jump()
+        #endregion
+
+        #region Logic
+
+        private void ProcessGravity()
         {
-            locomotion.ProcessJump(jumpHeight);
+            isGrounded = characterController.isGrounded;
+
+            verticalVelocity.y += EnvironmentConfigure.Gravity * Time.fixedDeltaTime;
+            if (isGrounded && verticalVelocity.y < 0)
+            {
+                verticalVelocity.y = -2;
+            }
         }
+
+        public void ProcessMove(Vector2 input)
+        {
+            Vector3 inputDirection = new Vector3(input.x, 0.0f, input.y).normalized;
+
+            if (inputDirection != Vector3.zero)
+            {
+                _targetRotation = GetDirectionAngle(inputDirection) + GetCameraDirectionAngle();
+                float rotation = Mathf.SmoothDampAngle(
+                    transform.eulerAngles.y, _targetRotation,
+                    ref _rotationVelocity, RotationSmoothTime
+                );
+                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            }
+
+            Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+            Vector3 horizontalVelocity = targetDirection.normalized * movementSpeed;
+            characterController.Move((horizontalVelocity + verticalVelocity) * Time.fixedDeltaTime);
+        }
+
+        private int GetCameraDirectionAngle()
+        {
+            throw new NotImplementedException();
+        }
+
+        private int GetDirectionAngle(Vector3 inputDirection)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }
