@@ -1,4 +1,5 @@
 using Character.Locomotion;
+using Character.Stats;
 using UnityEngine;
 
 namespace Character.Controller
@@ -7,7 +8,7 @@ namespace Character.Controller
     public class LocomotionController : MonoBehaviour
     {
         protected Locomotion locomotion;
-        [SerializeField] protected LocomotionStatus status;
+        [SerializeField] protected LocomotionStatus locomotionStatus;
         [SerializeField] protected Animator m_Animator;
 
         public Animator GetAnimator() => m_Animator;
@@ -58,18 +59,28 @@ namespace Character.Controller
 
         #endregion
 
+        public void OnChangeLocomotionStats(LocomotionStats stats)
+        {
+            movementSpeed = stats.MovementSpeed;
+            jumpHeight = stats.JumpHeight;
+
+            StandingWalkingState.SpeedModifiler = stats.StandingStats.WalkSpeedModifier;
+            StandingRunningState.SpeedModifiler = stats.StandingStats.RunSpeedModifier;
+            StandingSprintingState.SpeedModifiler = stats.StandingStats.SprintSpeedModifier;
+        }
+
         protected virtual void Awake()
         {
             locomotion = GetComponent<Locomotion>();
-            status = new LocomotionStatus();
+            locomotionStatus = new LocomotionStatus();
             InitializeStateMachine();
             ChangeState(StandingIdlingState);
         }
 
         protected virtual void ProcessMove()
         {
-            currentState.Update(status);
-            locomotion.ProcessMove(status.DirectionInput, movementSpeed * currentState.SpeedModifiler);
+            currentState.Update(locomotionStatus);
+            locomotion.ProcessMove(locomotionStatus.DirectionInput, movementSpeed * currentState.SpeedModifiler);
         }
 
         protected virtual void Jump()

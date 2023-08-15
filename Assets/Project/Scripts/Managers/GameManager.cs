@@ -1,4 +1,4 @@
-using Character;
+using Protagonist;
 using UnityEngine;
 
 namespace Manager
@@ -9,7 +9,7 @@ namespace Manager
 
         private void Start()
         {
-            Protagonist.Instance.Initialize(dataManager.ProtagonistStats);
+            TheProtagonist.Instance.Initialize(dataManager.ProtagonistStats);
         }
 
         private void Update()

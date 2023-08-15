@@ -5,8 +5,9 @@ using UnityEngine;
 namespace Data
 {
     [CreateAssetMenu(fileName = "ProtagonistData", menuName = "Data/ProtagonistData")]
-    public class ProtagonistStats : ScriptableObject
+    public class ProtagonistData : ScriptableObject
     {
+        [field: SerializeField] public Protagonist.ProtagonistConfigure Configure { get; private set; }
         [field: SerializeField] public CharacterStats BaseStats { get; private set; }
     }
 }

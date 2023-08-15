@@ -7,9 +7,9 @@ namespace Character.Controller
     public class LocomotionStatus
     {
         [field: SerializeField] public Vector2 DirectionInput { get; private set; }
+        [field: SerializeField] public Vector2 LookInput { get; private set; }
         [field: SerializeField] public bool IsWalking { get; private set; }
         [field: SerializeField] public bool IsSprinting { get; private set; }
-        [field: SerializeField] public bool IsCrouching { get; private set; }
         [field: SerializeField] public bool IsMoving { get; private set; }
 
         public LocomotionStatus()
@@ -18,21 +18,25 @@ namespace Character.Controller
             IsMoving = false;
             IsWalking = false;
             IsSprinting = false;
-            IsCrouching = false;
         }
 
         public void SetDirectionInput(Vector2 input)
         {
             DirectionInput = input;
-            IsMoving = (input == Vector2.zero);
+            IsMoving = (input != Vector2.zero);
         }
 
-        public void SetSprinting(bool value)
+        public void SetLookInput(Vector2 input)
+        {
+            LookInput = input;
+        }
+
+        public void SetSprint(bool value)
         {
             IsSprinting = value;
         }
 
-        public void SetWalking(bool value)
+        public void SetWalk(bool value)
         {
             IsWalking = value;
         }

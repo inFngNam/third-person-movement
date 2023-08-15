@@ -5,6 +5,6 @@ namespace Manager
 {
     public class DataManager : MonoBehaviour
     {
-        [field: SerializeField] public ProtagonistStats ProtagonistStats { get; private set; }
+        [field: SerializeField] public ProtagonistData ProtagonistStats { get; private set; }
     }
 }
