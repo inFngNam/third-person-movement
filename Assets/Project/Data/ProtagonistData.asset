@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c98e8f8fb308c844996d5b8471f2667, type: 3}
   m_Name: ProtagonistData
   m_EditorClassIdentifier: 
+  <Configure>k__BackingField:
+    <ControllerConfigure>k__BackingField:
+      <MoveRelativeToCamera>k__BackingField: 0
   <BaseStats>k__BackingField:
     <LocomotionStats>k__BackingField:
       <MovementSpeed>k__BackingField: 5
@@ -20,5 +23,3 @@ MonoBehaviour:
         <WalkSpeedModifier>k__BackingField: 0.5
         <RunSpeedModifier>k__BackingField: 1.5
         <SprintSpeedModifier>k__BackingField: 2
-      <CrounchingStats>k__BackingField:
-        <WalkSpeedModifier>k__BackingField: 0.5

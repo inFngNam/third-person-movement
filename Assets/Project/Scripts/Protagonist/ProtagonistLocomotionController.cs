@@ -19,7 +19,7 @@ namespace Protagonist
             m_Animator = GetComponent<Animator>();
         }
 
-        protected override void FixedUpdate()
+        protected override void Update()
         {
             ProcessGravity();
             ProcessMove();
@@ -27,14 +27,19 @@ namespace Protagonist
 
         #endregion UnityFunction
 
+        #region Initialize
         public void SetControllerConfigures(ProtagonistControllerConfigure _controllerConfigures)
         {
             configure = _controllerConfigures;
         }
 
+        #endregion Initialize
+
+        #region InputSystemCallbacks
+
         public void OnMove(InputValue value)
         {
-            locomotionStatus.SetDirectionInput(value.Get<Vector2>());
+            m_LocomotionStatus.SetDirectionInput(value.Get<Vector2>());
             UpdateState();
         }
 
@@ -42,21 +47,27 @@ namespace Protagonist
         {
             if (configure.MoveRelativeToCamera)
             {
-                locomotionStatus.SetLookInput(value.Get<Vector2>());
+                m_LocomotionStatus.SetLookInput(value.Get<Vector2>());
             }
         }
 
         public void OnSprint(InputValue value)
         {
-            locomotionStatus.SetSprint(value.isPressed);
+            m_LocomotionStatus.SetSprint(value.isPressed);
         }
 
         protected void OnToggleWalk(InputValue value)
         {
             if (value.isPressed)
             {
-                locomotionStatus.SetWalk(!locomotionStatus.IsWalking);
+                m_LocomotionStatus.SetWalk(!m_LocomotionStatus.IsWalking);
             }
         }
+
+        #endregion InputSystemCallbacks
+
+        #region Logic
+
+        #endregion Logic
     }
 }

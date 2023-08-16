@@ -1,7 +1,6 @@
 using Character.Locomotion;
 using Character.Stats;
 using Configure;
-using System;
 using UnityEngine;
 
 namespace Character.Controllers.Locomotion
@@ -9,17 +8,12 @@ namespace Character.Controllers.Locomotion
     public class LocomotionController : MonoBehaviour
     {
         internal CharacterController m_CharacterController;
+        internal Animator m_Animator;
 
         #region Animator
 
-        internal Animator m_Animator;
-
-        public Animator GetAnimator() => m_Animator;
-
-        protected virtual void InitializeAnimator()
-        {
-
-        }
+        private int MovementSpeedHash;
+        private int MotionSpeedHash;
 
         #endregion Animator
 
@@ -62,51 +56,49 @@ namespace Character.Controllers.Locomotion
 
         protected virtual void UpdateState()
         {
-            currentState.Update(locomotionStatus);
+            currentState.Update(m_LocomotionStatus);
         }
 
         #endregion StateMachine
 
         #region Stats
 
-        public void OnChangeLocomotionStats(LocomotionStats stats)
-        {
-            movementSpeed = stats.MovementSpeed;
-            jumpHeight = stats.JumpHeight;
-
-            StandingWalkingState.SpeedModifiler = stats.StandingStats.WalkSpeedModifier;
-            StandingRunningState.SpeedModifiler = stats.StandingStats.RunSpeedModifier;
-            StandingSprintingState.SpeedModifiler = stats.StandingStats.SprintSpeedModifier;
-        }
-
-        protected float movementSpeed;
+        protected float baseSpeed;
         protected float jumpHeight;
 
         #endregion
 
+        #region Consts
+
+        protected const float RotationSmoothTime = 0.12f;
+        protected const float SpeedChangeRate = 10.0f;
+
+        #endregion Consts
+
         #region Runtime
 
         [Header("Runtime")]
-        [SerializeField] internal LocomotionStatus locomotionStatus;
-        protected bool isGrounded;
+        [SerializeField] internal LocomotionStatus m_LocomotionStatus;
+        protected bool m_IsGrounded;
         protected Vector3 m_VerticalVelocity;
         protected float m_TargetRotation;
         protected float m_RotationVelocity;
-        protected const float RotationSmoothTime = 0.12f;
+        protected float m_MovementSpeed;
+        protected float m_AnimationBlend;
 
-        #endregion
+        #endregion Runtime
 
         #region UnityFunction
 
         protected virtual void Awake()
         {
-            locomotionStatus = new LocomotionStatus();
+            m_LocomotionStatus = new LocomotionStatus();
             InitializeStateMachine();
             InitializeAnimator();
             ChangeState(StandingIdlingState);
         }
 
-        protected virtual void FixedUpdate()
+        protected virtual void Update()
         {
             ProcessGravity();
             ProcessMove();
@@ -114,14 +106,32 @@ namespace Character.Controllers.Locomotion
 
         #endregion
 
+        #region Initialize
+
+        public void OnChangeLocomotionStats(LocomotionStats stats)
+        {
+            baseSpeed = stats.MovementSpeed;
+            jumpHeight = stats.JumpHeight;
+
+            StandingWalkingState.SpeedModifiler = stats.StandingStats.WalkSpeedModifier;
+            StandingRunningState.SpeedModifiler = stats.StandingStats.RunSpeedModifier;
+            StandingSprintingState.SpeedModifiler = stats.StandingStats.SprintSpeedModifier;
+        }
+
+        protected virtual void InitializeAnimator()
+        {
+
+        }
+
+        #endregion StatsChange
+
         #region Logic
 
         protected virtual void ProcessGravity()
         {
-            isGrounded = m_CharacterController.isGrounded;
-
-            m_VerticalVelocity.y += EnvironmentConfigure.Gravity * Time.fixedDeltaTime;
-            if (isGrounded && m_VerticalVelocity.y < 0)
+            m_IsGrounded = m_CharacterController.isGrounded;
+            m_VerticalVelocity.y += EnvironmentConfigure.Gravity * Time.deltaTime;
+            if (m_IsGrounded && m_VerticalVelocity.y < 0)
             {
                 m_VerticalVelocity.y = -2;
             }
@@ -129,22 +139,47 @@ namespace Character.Controllers.Locomotion
 
         protected virtual void ProcessMove()
         {
-            Vector2 input = locomotionStatus.DirectionInput;
+            Vector2 input = m_LocomotionStatus.DirectionInput;
+            float inputMagnitude = input.magnitude;
+
+            float targetSpeed = GetTargetSpeed();
+            float currentSpeed = GetCurrentSpeed();
+
+            float speedOffset = 0.1f;
+
+            if (currentSpeed < targetSpeed - speedOffset || currentSpeed > targetSpeed + speedOffset)
+            {
+                m_MovementSpeed = Mathf.Lerp(currentSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
+                m_MovementSpeed = Mathf.Round(m_MovementSpeed * 1000f) / 1000f;
+            }
+            else
+            {
+                m_MovementSpeed = targetSpeed;
+            }
+
             Vector3 moveDirection = new Vector3(input.x, 0.0f, input.y).normalized;
 
-            if (moveDirection != Vector3.zero)
+            m_AnimationBlend = Mathf.Lerp(m_AnimationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
+
+            if (input != Vector2.zero)
             {
                 m_TargetRotation = GetDirectionAngle(moveDirection);
                 float rotation = Mathf.SmoothDampAngle(
-                    transform.eulerAngles.y, m_TargetRotation,
-                    ref m_RotationVelocity, RotationSmoothTime
+                    transform.eulerAngles.y, m_TargetRotation, ref m_RotationVelocity, RotationSmoothTime
                 );
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, m_TargetRotation, 0.0f) * Vector3.forward;
-            Vector3 horizontalVelocity = targetDirection.normalized * GetMovementSpeed();
-            m_CharacterController.Move((horizontalVelocity + m_VerticalVelocity) * Time.fixedDeltaTime);
+            Vector3 horizontalVelocity = targetDirection * m_MovementSpeed;
+            m_CharacterController.Move((horizontalVelocity + m_VerticalVelocity) * Time.deltaTime);
+        }
+
+        protected virtual void ProcessAnimatior()
+        {
+            m_AnimationBlend = m_AnimationBlend < 0.01 ? 0 : m_AnimationBlend;
+            //m_Animator.SetFloat(_animIDSpeed, _animationBlend);
+            //m_Animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
         }
 
         protected float GetDirectionAngle(Vector3 moveDirection)
@@ -152,12 +187,16 @@ namespace Character.Controllers.Locomotion
             return Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
         }
 
-        protected float GetMovementSpeed()
+        protected float GetTargetSpeed()
         {
-            return currentState.SpeedModifiler * movementSpeed;
+            return currentState.SpeedModifiler * baseSpeed;
+        }
+
+        protected float GetCurrentSpeed()
+        {
+            return new Vector2(m_CharacterController.velocity.x, m_CharacterController.velocity.z).magnitude;
         }
 
         #endregion
     }
-
 }

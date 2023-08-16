@@ -13,7 +13,6 @@ namespace Character.Locomotion.Grounded.Standing
         public override void Enter()
         {
             base.Enter();
-            controller.GetAnimator().SetFloat("movement_speed", 1);
         }
 
         public override void Update(LocomotionStatus status)
