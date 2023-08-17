@@ -63,6 +63,7 @@ namespace Protagonist
             if (value.isPressed)
             {
                 m_LocomotionStatus.SetWalk(!m_LocomotionStatus.IsWalking);
+                UpdateState();
             }
         }
 

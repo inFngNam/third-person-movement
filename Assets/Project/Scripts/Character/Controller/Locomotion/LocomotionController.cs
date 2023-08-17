@@ -148,16 +148,13 @@ namespace Character.Controllers.Locomotion
 
             float speedOffset = 0.1f;
 
-            float xm_MovementSpeed = 0.01f;
-
             if (currentSpeed < targetSpeed - speedOffset || currentSpeed > targetSpeed + speedOffset)
             {
-                xm_MovementSpeed = Mathf.Lerp(currentSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
-                Debug.Log($"{currentSpeed} {targetSpeed * inputMagnitude} {Time.deltaTime * SpeedChangeRate} {m_MovementSpeed}");
+                m_MovementSpeed = Mathf.Lerp(currentSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate * (currentState.SpeedModifiler > 0 ? currentState.SpeedModifiler : 1.0f));
             }
             else
             {
-                xm_MovementSpeed = targetSpeed;
+                m_MovementSpeed = targetSpeed;
             }
 
             Vector3 moveDirection = new Vector3(input.x, 0.0f, input.y).normalized;
@@ -172,7 +169,7 @@ namespace Character.Controllers.Locomotion
             }
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, m_TargetRotation, 0.0f) * Vector3.forward;
-            Vector3 horizontalVelocity = targetDirection * xm_MovementSpeed;
+            Vector3 horizontalVelocity = targetDirection * m_MovementSpeed;
             m_CharacterController.Move((horizontalVelocity + m_VerticalVelocity) * Time.deltaTime);
         }
 
