@@ -23,11 +23,13 @@ namespace Protagonist
         {
             ProcessGravity();
             ProcessMove();
+            ProcessAnimatior();
         }
 
         #endregion UnityFunction
 
         #region Initialize
+
         public void SetControllerConfigures(ProtagonistControllerConfigure _controllerConfigures)
         {
             configure = _controllerConfigures;

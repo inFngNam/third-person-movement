@@ -17,9 +17,9 @@ MonoBehaviour:
       <MoveRelativeToCamera>k__BackingField: 0
   <BaseStats>k__BackingField:
     <LocomotionStats>k__BackingField:
-      <MovementSpeed>k__BackingField: 5
+      <MovementSpeed>k__BackingField: 2
       <JumpHeight>k__BackingField: 1.2
       <StandingStats>k__BackingField:
         <WalkSpeedModifier>k__BackingField: 0.5
-        <RunSpeedModifier>k__BackingField: 1.5
+        <RunSpeedModifier>k__BackingField: 1
         <SprintSpeedModifier>k__BackingField: 2

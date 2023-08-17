@@ -71,6 +71,7 @@ namespace Character.Controllers.Locomotion
         #region Consts
 
         protected const float RotationSmoothTime = 0.12f;
+        protected const float AnimatorSpeedChangeRate = 20.0f;
         protected const float SpeedChangeRate = 10.0f;
 
         #endregion Consts
@@ -120,7 +121,7 @@ namespace Character.Controllers.Locomotion
 
         protected virtual void InitializeAnimator()
         {
-
+            MovementSpeedHash = Animator.StringToHash("movement_speed");
         }
 
         #endregion StatsChange
@@ -147,19 +148,19 @@ namespace Character.Controllers.Locomotion
 
             float speedOffset = 0.1f;
 
+            float xm_MovementSpeed = 0.01f;
+
             if (currentSpeed < targetSpeed - speedOffset || currentSpeed > targetSpeed + speedOffset)
             {
-                m_MovementSpeed = Mathf.Lerp(currentSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
-                m_MovementSpeed = Mathf.Round(m_MovementSpeed * 1000f) / 1000f;
+                xm_MovementSpeed = Mathf.Lerp(currentSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
+                Debug.Log($"{currentSpeed} {targetSpeed * inputMagnitude} {Time.deltaTime * SpeedChangeRate} {m_MovementSpeed}");
             }
             else
             {
-                m_MovementSpeed = targetSpeed;
+                xm_MovementSpeed = targetSpeed;
             }
 
             Vector3 moveDirection = new Vector3(input.x, 0.0f, input.y).normalized;
-
-            m_AnimationBlend = Mathf.Lerp(m_AnimationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
 
             if (input != Vector2.zero)
             {
@@ -171,15 +172,15 @@ namespace Character.Controllers.Locomotion
             }
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, m_TargetRotation, 0.0f) * Vector3.forward;
-            Vector3 horizontalVelocity = targetDirection * m_MovementSpeed;
+            Vector3 horizontalVelocity = targetDirection * xm_MovementSpeed;
             m_CharacterController.Move((horizontalVelocity + m_VerticalVelocity) * Time.deltaTime);
         }
 
         protected virtual void ProcessAnimatior()
         {
+            m_AnimationBlend = Mathf.Lerp(m_AnimationBlend, currentState.SpeedModifiler, Time.deltaTime * SpeedChangeRate);
             m_AnimationBlend = m_AnimationBlend < 0.01 ? 0 : m_AnimationBlend;
-            //m_Animator.SetFloat(_animIDSpeed, _animationBlend);
-            //m_Animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+            m_Animator.SetFloat(MovementSpeedHash, m_AnimationBlend);
         }
 
         protected float GetDirectionAngle(Vector3 moveDirection)
@@ -194,7 +195,7 @@ namespace Character.Controllers.Locomotion
 
         protected float GetCurrentSpeed()
         {
-            return new Vector2(m_CharacterController.velocity.x, m_CharacterController.velocity.z).magnitude;
+            return new Vector3(m_CharacterController.velocity.x, 0.0f, m_CharacterController.velocity.z).magnitude;
         }
 
         #endregion
